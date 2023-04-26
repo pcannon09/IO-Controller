@@ -7,6 +7,12 @@
 
 First, you need to create a Makefile to do it easier, just copy the IO Controller Makefile and change the .o files to the ones that you want (DON'T GET RID OF 'ioController.o' and 'stdioc.o')
 
+How to include:
+
+```cpp
+#include "path/to/project/ioController.hpp"
+```
+
 How to IO:
 
 ```cpp

@@ -11,9 +11,12 @@ extern "C"
 
 #include "../include/stdioc.hpp"
 
-std::string ioc_key_pressed = "";
-std::string ioc_last_key_pressed = "";
-std::string prKey = "";
+std::string NONE = "{NONE}";
+
+std::string ioc_key_pressed = NONE;
+std::string ioc_last_key_pressed = NONE;
+std::string ioc_last_textColor = "reset";
+std::string ioc_last_bgColor = "reset";
 std::string exception;
 
 bool ioc_key_is_pressed = false;
@@ -21,6 +24,15 @@ bool ioc_key_is_pressed = false;
 #define IOC_getch                               c_getch
 #define IOC_getche                              c_getche
 #define IOC_kbhit                               c_kbhit
+
+#define IOC_IS_KEY_PRESSED\
+    if (IOC_kbhit())
+
+#define loop\
+    while (1)
+
+#define repeat(x)\
+    for (int i = 0 ; i < x ; i++)
 
 #define IOC_KB_KEY_PRESSED(x)\
     if (ioc_key_pressed == (x))
@@ -93,23 +105,57 @@ namespace ioc
         
         echo(args...);
     }
-    
-    // TODO
-    // template <typename Var, typename... Args>
 
-    // /// @brief Formats any datatype
-    // /// @param args (Args...)
-    // void format(Var *var, Args... args)
-    // {
-    //     var = args...;
-    // }
+    namespace compare
+    {
+        /// @brief Checks if key1 is same as key2, returns 'true' / '1' if key1 is = key2, else, returns 'false' / '0'
+        /// @param key1 (std::string)
+        /// @param key2 (std::string)
+        /// @return bool
+        bool key(std::string key1, std::string key2)
+        {
+            if (key1 == key2)
+            {
+                return true;
+            }
+
+            else
+            {
+                return false;
+            }
+        }
+
+        /// @brief Checks if key1 is same as key2, returns 'true' / '1' if key1 is = key2, else, returns 'false' / '0', but it checks it as an ascii value
+        /// @param key1 (int)
+        /// @param key2 (int)
+        /// @return bool
+        bool asciiKey(int key1, int key2)
+        {
+            if (key1 == key2)
+            {
+                return true;
+            }
+            
+            else
+            {
+                return false;
+            }
+        }
+    }
 
     namespace kb
     {
+        /// @brief Returns the ascii key pressed
+        /// @return int
+        int getAscii()
+        {
+            return IOC_getche();
+        }
+
         ///  @brief Checks if ioc_key_pressed.size() is bigger than 1 and value not "space"
         void check()
         {
-            if (ioc_key_pressed.size() > 1 && ioc_key_pressed != "space" && ioc_key_pressed != "<unknown>")
+            if (ioc_key_pressed.size() > 1 && ioc_key_pressed != "space" && ioc_key_pressed != "<unknown>" && ioc_key_pressed != "return")
             {
                 stdioc::exception("ioc_key_pressed size is bigger than 1", "", "", "", "", "");
             }
@@ -128,6 +174,42 @@ namespace ioc
             }
         }
 
+        template <typename T>
+
+        /// @brief Adds any ascii character that you want to program
+        void updateAddAscii(T addedNum)
+        {
+            ioc_key_pressed = "";
+            ioc_key_is_pressed = false;
+
+            if (IOC_kbhit())
+            {
+                if (IOC_getche() && addedNum)
+                {
+                    ioc_key_pressed = addedNum;
+                    ioc_key_is_pressed = false;
+                }
+            }
+        }
+
+        template <typename T>
+
+        /// @brief Adds any character that you want to program as long that is a one character char
+        void updateAddChar(T addedChar)
+        {
+            ioc_key_pressed = "";
+            ioc_key_is_pressed = false;
+
+            if (IOC_kbhit())
+            {
+                if (IOC_getche() && addedChar)
+                {
+                    ioc_key_pressed = addedChar;
+                    ioc_key_is_pressed = false;
+                }
+            }
+        }
+
         /// @brief Updates key press
         void update()
         {
@@ -138,6 +220,24 @@ namespace ioc
             {
                 switch (IOC_getche())
                 {
+                case 000:
+                    ioc_key_is_pressed = true;
+                    ioc_key_pressed = "NULL";
+                     
+                    break;
+
+                case '\n':
+                    ioc_key_is_pressed = true;
+                    ioc_key_pressed = "return";
+                     
+                    break;
+
+                case 127 /*Backspace button*/:
+                    ioc_key_is_pressed = true;
+                    ioc_key_pressed = "backspace";
+                    
+                    break;
+
                 case '|':
                     ioc_key_is_pressed = true;
                     ioc_key_pressed = "|";
@@ -159,12 +259,6 @@ namespace ioc
                 case '@':
                     ioc_key_is_pressed = true;
                     ioc_key_pressed = "@";
-
-                    break;
-
-                case '£':
-                    ioc_key_is_pressed = true;
-                    ioc_key_pressed = "£";
 
                     break;
 
@@ -272,6 +366,24 @@ namespace ioc
 
                     break;
 
+                case '=':
+                    ioc_key_is_pressed = true;
+                    ioc_key_pressed = "=";
+
+                    break;
+
+                case '-':
+                    ioc_key_is_pressed = true;
+                    ioc_key_pressed = "-";
+
+                    break;
+
+                case '?':
+                    ioc_key_is_pressed = true;
+                    ioc_key_pressed = "?";
+
+                    break;                    
+
                 case '\'':
                     ioc_key_is_pressed = true;
                     ioc_key_pressed = "\\";
@@ -308,18 +420,6 @@ namespace ioc
 
                     break;
 
-                case '¡':
-                    ioc_key_is_pressed = true;
-                    ioc_key_pressed = "¡";
-
-                    break;
-
-                case '¿':
-                    ioc_key_is_pressed = true;
-                    ioc_key_pressed = "¿";
-
-                    break;
-                
                 // Numbers
 
                 case '1':
@@ -542,157 +642,157 @@ namespace ioc
 
                 case 'Q':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "q";
+                    ioc_key_pressed = "Q";
 
                     break;
 
                 case 'W':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "w";
+                    ioc_key_pressed = "W";
 
                     break;
 
                 case 'E':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "e";
+                    ioc_key_pressed = "E";
 
                     break;
 
                 case 'R':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "r";
+                    ioc_key_pressed = "R";
 
                     break;
                 
                 case 'T':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "t";
+                    ioc_key_pressed = "T";
 
                     break;
 
                 case 'Y':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "y";
+                    ioc_key_pressed = "Y";
 
                     break;
 
                 case 'U':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "u";
+                    ioc_key_pressed = "U";
 
                     break;
 
                 case 'I':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "i";
+                    ioc_key_pressed = "I";
 
                     break;
 
                 case 'O':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "o";
+                    ioc_key_pressed = "O";
 
                     break;
 
                 case 'P':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "p";
+                    ioc_key_pressed = "P";
 
                     break;
 
                 case 'A':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "a";
+                    ioc_key_pressed = "A";
 
                     break;
 
                 case 'S':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "s";
+                    ioc_key_pressed = "S";
 
                     break;
-                
+
                 case 'D':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "d";
+                    ioc_key_pressed = "D";
 
                     break;
 
                 case 'F':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "f";
+                    ioc_key_pressed = "F";
 
                     break;
 
                 case 'G':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "g";
+                    ioc_key_pressed = "G";
 
                     break;
 
                 case 'H':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "h";
+                    ioc_key_pressed = "H";
 
                     break;
 
                 case 'J':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "j";
+                    ioc_key_pressed = "J";
 
                     break;
 
                 case 'K':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "k";
+                    ioc_key_pressed = "K";
 
                     break;
 
                 case 'L':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "l";
+                    ioc_key_pressed = "L";
 
                     break;
                 
                 case 'Z':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "z";
+                    ioc_key_pressed = "Z";
 
                     break;
 
                 case 'X':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "x";
+                    ioc_key_pressed = "X";
 
                     break;
                 
                 case 'C':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "c";
+                    ioc_key_pressed = "C";
 
                     break;
 
                 case 'V':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "v";
+                    ioc_key_pressed = "V";
 
                     break;
 
                 case 'B':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "b";
+                    ioc_key_pressed = "B";
 
                     break;
 
                 case 'N':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "n";
+                    ioc_key_pressed = "N";
 
                     break;
 
                 case 'M':
                     ioc_key_is_pressed = true;
-                    ioc_key_pressed = "m";
+                    ioc_key_pressed = "M";
 
                     break;
 
@@ -782,7 +882,7 @@ namespace ioc
         
         /// @brief Prints to the screen where the terminal cursor x is
         /// @param type (std::string)
-        void printWhereXY(std::string type)
+        void printWhereXY()
         {
             print(c_wherex());
             print(c_wherey());
@@ -906,17 +1006,132 @@ namespace ioc
                 c_textcolor(BLINK);
             }
 
+            else if (color == "reset" || color == "r")
+            {
+                ioc::color::set("white");
+            }
+
             else
             {
                 stdioc::exception("No color named ", color.c_str(), "", "", "", "");
             }
+
+            ioc_last_textColor = color;
         }
 
+        /// @brief Sets text background
+        /// @param color 
+        void setBackground(std::string color)
+        {
+            if (color == "black" || color == "0")
+            {
+                c_textbackground(BLACK);
+            }
+
+            else if (color == "blue" || color == "1")
+            {
+                c_textbackground(BLUE);
+            }
+
+            else if (color == "green" || color == "2")
+            {
+                c_textbackground(GREEN);
+            }
+
+            else if (color == "cyan" || color == "3")
+            {
+                c_textbackground(CYAN);
+            }
+            
+            else if (color == "red" || color == "4")
+            {
+                c_textbackground(RED);
+            }
+
+            else if (color == "magenta" || color == "5")
+            {
+                c_textbackground(MAGENTA);
+            }
+
+            else if (color == "brown" || color == "6")
+            {
+                c_textbackground(BROWN);
+            }
+
+            else if (color == "light gray" || color == "light grey" || color == "7")
+            {
+                c_textbackground(LIGHTGRAY);
+            }
+
+            else if (color == "dark gray" || color == "light grey" || color == "8")
+            {
+                c_textbackground(DARKGRAY);
+            }
+
+            else if (color == "light blue" || color == "9")
+            {
+                c_textbackground(LIGHTBLUE);
+            }
+
+            else if (color == "light green" || color == "10")
+            {
+                c_textbackground(LIGHTGREEN);
+            }
+
+            else if (color == "light cyan" || color == "11")
+            {
+                c_textbackground(LIGHTCYAN);
+            }
+
+            else if (color == "light red" || color == "12")
+            {
+                c_textbackground(LIGHTRED);
+            }
+
+            else if (color == "light magenta" || color == "13")
+            {
+                c_textbackground(LIGHTMAGENTA);
+            }
+
+            else if (color == "yellow" || color == "14")
+            {
+                c_textbackground(YELLOW);
+            }
+
+            else if (color == "white" || color == "15")
+            {
+                c_textbackground(WHITE);
+            }
+
+            else if (color == "blink" || color == "none" || color == "reset" || color == "128")
+            {
+                c_textbackground(BLINK);
+            }
+
+            else if (color == "reset" || color == "r")
+            {
+                ioc::color::setBackground("black");
+            }
+
+            else
+            {
+                stdioc::exception("No color named ", color.c_str(), "", "", "", "");
+            }
+        
+            ioc_last_bgColor = color;
+        }
+        
+        /// @brief Resets color (Background color and text color)
+        void reset()
+        {
+            ioc::color::set("reset");
+            ioc::color::setBackground("reset");
+        }
 
         /// @brief Gives you all the colors of the ioc::color::set();
         void help()
         {
-            for (int i = 0 ; i < 14 ; i++)
+            repeat(14)
             {
                 c_textcolor(i);
             
@@ -927,5 +1142,77 @@ namespace ioc
 
             ioc::print("The quick brown fox jumps over the lazy dog");
         }
+    }
+
+    /// @brief Ends program and resets color manualy
+    /// @param status 
+    void end(int status)
+    {
+        ioc::color::reset();
+        std::exit(status);
+    }
+
+
+    template <typename T>
+
+    /// @brief Shows an error to the screen with a red color
+    /// @param message (T)
+    void error(T message)
+    {
+        ioc::color::set("red");
+        std::cout<<message<<"\n";
+    
+        std::exit(0);
+    }
+    
+    template <typename T, typename... Args>
+
+    /// @brief Prints text to terminal
+    /// @param text (T)
+    /// @param args (Args...)
+    void error(T text, Args... args)
+    {
+        ioc::color::set("red");
+
+        std::cout<<text<<" ";
+
+        print(args...);
+
+        ioc::color::set(ioc_last_textColor);
+    
+        std::exit(0);        
+    }
+
+    template <typename T>
+
+    /// @brief Sets a warning with a yellow color
+    /// @param message (T)
+    void warn(T message)
+    {
+        ioc::color::set("yellow");
+
+        std::cout<<message<<"\n";
+        
+        ioc::color::set(ioc_last_textColor);
+    
+        std::exit(0);
+    }
+    
+    template <typename T, typename... Args>
+
+    /// @brief Sets a warning with a yellow color
+    /// @param text (T)
+    /// @param args (Args...)
+    void warn(T text, Args... args)
+    {
+        ioc::color::set("yellow");
+
+        std::cout<<text<<" ";
+
+        print(args...);
+
+        ioc::color::set(ioc_last_textColor);
+    
+        std::exit(0);        
     }
 }

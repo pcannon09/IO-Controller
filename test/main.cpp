@@ -7,7 +7,7 @@ int main()
     ioc::color::help();
     ioc::color::set("red");
     ioc::kb::update();
-    ioc::echo("Hello world\nThere is no new line here ");
+    ioc::echo("Hello world\nThere is no new line here\n ");
 
     // Emulation
 
@@ -92,7 +92,7 @@ int main()
 
     ioc::println("Hi!", "Type number 2");
 
-    while (1)
+    loop
     {
         ioc::kb::update();
 
@@ -113,28 +113,82 @@ int main()
         }
     }
 
+    ioc::print("Press the enter key");
+
+    loop
+    {
+        ioc::kb::update();
+
+        IOC_KB_KEY_PRESSED("return")
+        {
+
+            ioc::print("Done!");
+
+            break;
+        }
+
+        IOC_KB_NOT_PRESSED("return")
+        {
+            if (ioc_key_is_pressed == true)
+            {
+                ioc::print("You didn't pressed the return key");
+            }
+        }
+    }
+
     ioc::print("Press any key");
 
-    while (1)
+    loop
     {
         ioc::kb::anyKey();
 
         if (ioc_key_is_pressed)
         {
+            ioc::print("Ascii key: ", ioc::kb::getAscii());
             ioc::print("Done!");
 
             break;
         }
     }
 
-    sleep(1);   
+    ioc::color::set("blue");
+    ioc::print("Press any key to continue");
+
+    loop
+    {
+        IOC_IS_KEY_PRESSED
+        {
+            break;
+        }
+    }
+
     system("clear");
 
+    ioc::print("Last text color was: ", ioc_last_textColor);
+
     ioc::color::set("white");
+    ioc::print("Now it's: ", ioc_last_textColor);
     ioc::cursor::gotoxy(5, 6);
     ioc::print("Your current terminal window width is", ioc::terminalW(), "and the current window height is", ioc::terminalH());
     ioc::cursor::gotoxy(30, 10);
     ioc::print("Your last key press was", ioc_last_key_pressed);
+    ioc::cursor::gotoxy(1, 11);
 
-    return 0;
+    ioc::color::set("blue");
+    ioc::print("Press any key to continue");
+
+    loop
+    {
+        IOC_IS_KEY_PRESSED
+        {
+            break;
+        }
+    }
+
+    ioc::color::set("white");
+    ioc::color::setBackground("blue");
+
+    ioc::print("Goodbye!");
+
+    ioc::end(0);
 }

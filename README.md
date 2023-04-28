@@ -13,6 +13,11 @@ How to include:
 #include "path/to/project/ioController.hpp"
 ```
 
+To start the program you need to do this pice of code:
+```cpp
+ioc::start();
+```
+
 How to IO:
 
 ```cpp

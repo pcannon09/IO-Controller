@@ -118,3 +118,5 @@ ioc::color::reset(); // Resets the text background and text color of the termina
 ```
 
 Hope it helps!
+
+You can read file: main.cpp for more info

@@ -12,6 +12,7 @@ extern "C"
 }
 
 #include "../include/stdioc.hpp"
+#include "../include/structs.hpp"
 
 extern std::string NONE;
 
@@ -49,6 +50,8 @@ extern bool ioc_key_is_pressed;
 
 namespace ioc
 {
+    void start();
+
     template <typename T>
 
     void print(T message)
@@ -97,11 +100,12 @@ namespace ioc
         echo(args...);
     }
 
+    std::string input(std::string text);
+
     int terminalW();
     int terminalH();
     void printTerminalW();
     void printTerminalH();
-
 
     namespace compare
     {
@@ -172,5 +176,113 @@ namespace ioc
         void reset();
     }
 
+
+    namespace rule
+    {
+        void colorReset(bool val);
+        void reset();
+    }
+
     void end(int status);
+    
+    
+    template <typename T>
+
+    /// @brief Sets an error
+    /// @param message (T)
+    void error(T message)
+    {
+        ioc::color::set("red");
+
+        if (ioc::rules.errorColorReset == true)
+        {
+            ioc::color::setBackground("reset");
+        }
+
+        std::cout<<"Error: "<<message<<"\n";
+        
+        if (ioc::rules.setLastColorBgWhenErrorOrWarnEnds == true)
+        {
+            ioc::color::setBackground(ioc_last_bgColor);
+        }
+
+        ioc::end(1);
+    }
+    
+    template <typename T, typename... Args>
+
+    /// @brief Sets an error
+    /// @param text (T)
+    /// @param message (Args...)
+    void error(T text, Args... args)
+    {
+        ioc::color::set("red");
+
+        if (ioc::rules.errorColorReset == true)
+        {
+            ioc::color::setBackground("reset");
+        }
+
+        std::cout<<"Error: "<<text<<" ";
+
+        ioc::print(args...);
+
+        ioc::color::set(ioc_last_textColor);
+
+        if (ioc::rules.setLastColorBgWhenErrorOrWarnEnds == true)
+        {
+            ioc::color::setBackground(ioc_last_bgColor);
+        }
+
+        ioc::end(1);
+    }
+
+    template <typename T>
+
+    /// @brief Sets a warning
+    /// @param message (Args...)
+    void warn(T message)
+    {
+        ioc::color::set("yellow");
+
+        if (ioc::rules.warnColorReset == true)
+        {
+            ioc::color::setBackground("reset");
+        }
+
+        std::cout<<"Warning: "<<message<<"\n";
+
+        if (ioc::rules.setLastColorBgWhenErrorOrWarnEnds == true)
+        {
+            ioc::color::setBackground(ioc_last_bgColor);
+        }
+
+        ioc::color::set(ioc_last_textColor);
+    }
+    
+    template <typename T, typename... Args>
+
+    /// @brief Sets a warning
+    /// @param text (T)
+    /// @param message (Args...)
+    void warn(T text, Args... args)
+    {
+        ioc::color::set("yellow");
+
+        if (ioc::rules.warnColorReset == true)
+        {
+            ioc::color::setBackground("reset");
+        }
+
+        std::cout<<"Warning: "<<text<<" ";
+
+        ioc::print(args...);
+
+        if (ioc::rules.setLastColorBgWhenErrorOrWarnEnds == true)
+        {
+            ioc::color::setBackground(ioc_last_bgColor);
+        }
+
+        ioc::color::set(ioc_last_textColor);
+    }
 }

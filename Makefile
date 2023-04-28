@@ -6,7 +6,7 @@ CONIODIR = vendor/conio-master
 CPPVERSION = 17
 
 INCS = 
-OBJS = main.o ioController.o stdioc.o
+OBJS = main.o ioController.o stdioc.o functions.o
 EXE = main
 
 CXXFLAGS = -Wall -Wextra -Wconversion -g -MMD -MP -std=c++$(CPPVERSION)

@@ -1,8 +1,11 @@
+#define CREATE_RULES
+
 #include <string>
 #include <string.h>
 #include <iostream>
 #include <stdio.h>
 #include <sys/ioctl.h>
+#include <typeinfo>
 
 extern "C"
 {
@@ -10,6 +13,7 @@ extern "C"
 }
 
 #include "../include/stdioc.hpp"
+#include "../include/structs.hpp"
 
 std::string NONE = "{NONE}";
 
@@ -39,7 +43,7 @@ bool ioc_key_is_pressed = false;
 
 #define IOC_KB_NOT_PRESSED(x)\
     if (ioc_key_pressed != (x))\
-        if (ioc_key_is_pressed == true)
+        if (ioc_key_is_pressed)
 
 namespace ioc
 {
@@ -105,7 +109,7 @@ namespace ioc
         
         echo(args...);
     }
-
+    
     namespace compare
     {
         /// @brief Checks if key1 is same as key2, returns 'true' / '1' if key1 is = key2, else, returns 'false' / '0'
@@ -704,6 +708,7 @@ namespace ioc
                     ioc_key_is_pressed = true;
                     ioc_key_pressed = "A";
 
+
                     break;
 
                 case 'S':
@@ -817,7 +822,7 @@ namespace ioc
 
             ioc::kb::check();
 
-            if (ioc_key_is_pressed == true)
+            if (ioc_key_is_pressed)
             {
                 ioc_last_key_pressed = whatKey;
             }
@@ -1144,75 +1149,177 @@ namespace ioc
         }
     }
 
+    namespace rule
+    {
+        /// @brief Sets variable 'ioc::rules.warnColorReset' and 'ioc::rules.errorColorReset' to a boolean value
+        /// @param val (bool)
+        void colorReset(bool val)
+        {
+            ioc::rules.warnColorReset = val;
+            ioc::rules.errorColorReset = val;
+        }
+
+        /// @brief Resets all the rules as when the program started
+        void reset()
+        {
+            ioc::rules.warnColorReset = false;
+            ioc::rules.errorColorReset = false;
+            ioc::rules.setLastColorBgWhenErrorOrWarnEnds = true;
+            ioc::rules.newlineWhenTextInput = false;
+        }
+    }
+
+
+    /// @brief Does an std::cin but better (Gets all the the string and you can ask a question directly)
+    /// This function doesen't work as expected
+    /// @param text (std::string)
+    /// @return std::string
+    std::string input(std::string text)
+    {
+        std::string keyInput = "";
+
+        if (!rules.newlineWhenTextInput)
+        {
+            ioc::echo(text);
+        }
+
+        else
+        {
+            ioc::print(text);
+        }
+
+        while (1)
+        {
+            ioc::kb::update();
+
+            if (ioc_key_pressed == "return")
+            {
+                return keyInput;
+            }
+
+            else if (ioc_key_pressed == "backspace")
+            {
+                ioc_key_pressed = "";
+
+                keyInput.pop_back();
+            }
+
+            else if (ioc_key_pressed == "space")
+            {
+                ioc_key_pressed = " ";
+            }
+
+            keyInput += ioc_key_pressed;
+
+            ioc::echo(ioc_key_pressed);
+        }
+    }
+
     /// @brief Ends program and resets color manualy
-    /// @param status 
+    /// @param status (int)
     void end(int status)
     {
         ioc::color::reset();
         std::exit(status);
     }
 
-
     template <typename T>
 
-    /// @brief Shows an error to the screen with a red color
+    /// @brief Sets an error
     /// @param message (T)
     void error(T message)
     {
         ioc::color::set("red");
-        std::cout<<message<<"\n";
-    
-        std::exit(0);
+
+        if (ioc::rules.errorColorReset)
+        {
+            ioc::color::setBackground("reset");
+        }
+
+        std::cout<<"Error: "<<message<<"\n";
+        
+        if (ioc::rules.setLastColorBgWhenErrorOrWarnEnds)
+        {
+            ioc::color::setBackground(ioc_last_bgColor);
+        }
+
+        ioc::end(1);
     }
     
     template <typename T, typename... Args>
 
-    /// @brief Prints text to terminal
+    /// @brief Sets an error
     /// @param text (T)
-    /// @param args (Args...)
+    /// @param message (Args...)
     void error(T text, Args... args)
     {
         ioc::color::set("red");
 
-        std::cout<<text<<" ";
+        if (ioc::rules.errorColorReset)
+        {
+            ioc::color::setBackground("reset");
+        }
 
-        print(args...);
+        std::cout<<"Error: "<<text<<" ";
+
+        ioc::print(args...);
 
         ioc::color::set(ioc_last_textColor);
-    
-        std::exit(0);        
+
+        if (ioc::rules.setLastColorBgWhenErrorOrWarnEnds)
+        {
+            ioc::color::setBackground(ioc_last_bgColor);
+        }
+
+        ioc::end(1);
     }
 
     template <typename T>
 
-    /// @brief Sets a warning with a yellow color
-    /// @param message (T)
+    /// @brief Sets a warning
+    /// @param message (Args...)
     void warn(T message)
     {
         ioc::color::set("yellow");
 
-        std::cout<<message<<"\n";
-        
+        if (ioc::rules.warnColorReset)
+        {
+            ioc::color::setBackground("reset");
+        }
+
+        std::cout<<"Warning: "<<message<<"\n";
+
+        if (ioc::rules.setLastColorBgWhenErrorOrWarnEnds)
+        {
+            ioc::color::setBackground(ioc_last_bgColor);
+        }
+
         ioc::color::set(ioc_last_textColor);
-    
-        std::exit(0);
     }
     
     template <typename T, typename... Args>
 
-    /// @brief Sets a warning with a yellow color
+    /// @brief Sets a warning
     /// @param text (T)
-    /// @param args (Args...)
+    /// @param message (Args...)
     void warn(T text, Args... args)
     {
         ioc::color::set("yellow");
 
-        std::cout<<text<<" ";
+        if (ioc::rules.warnColorReset)
+        {
+            ioc::color::setBackground("reset");
+        }
 
-        print(args...);
+        std::cout<<"Warning: "<<text<<" ";
+
+        ioc::print(args...);
+
+        if (ioc::rules.setLastColorBgWhenErrorOrWarnEnds)
+        {
+            ioc::color::setBackground(ioc_last_bgColor);
+        }
 
         ioc::color::set(ioc_last_textColor);
-    
-        std::exit(0);        
     }
 }

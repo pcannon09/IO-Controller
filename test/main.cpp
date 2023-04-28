@@ -4,6 +4,8 @@
 
 int main()
 {
+    ioc::start();
+    
     ioc::color::help();
     ioc::color::set("red");
     ioc::kb::update();
@@ -185,10 +187,50 @@ int main()
         }
     }
 
+    std::string aVariable = "";
+
+    aVariable = ioc::input("If you type 'hello', you will get 'Hi!', but if not, it says 'Goodbye!' (Variable must be std::string) ");
+
+    ioc::print(aVariable);
+
+    if (aVariable == "hello")
+    {
+        ioc::print("Hi!");
+    }
+    
+    else
+    {
+        ioc::print("Goodbye!");
+    }
+
+    int anotherVar = 0;
+
+    std::to_string(anotherVar) = ioc::input("It will compare if number is bigger than 50 or not ");
+
+    if (anotherVar == 50)
+    {
+        ioc::print("The variable is equal to 50");
+    }
+
+    else if (anotherVar > 50)
+    {
+        ioc::print("Variable is bigger than 50");
+    }
+
+    else
+    {
+        ioc::print("Variable is smaller than 50");
+    }
+
     ioc::color::set("white");
     ioc::color::setBackground("blue");
 
-    ioc::print("Goodbye!");
+    const char *message = "Bye!";
 
-    ioc::end(0);
+    ioc::rules.setLastColorBgWhenErrorOrWarnEnds = false;
+    ioc::rules.errorColorReset = true;
+    ioc::rules.warnColorReset = false;
+
+    ioc::warn("Program is going", "to", "close, but as you can see, you can set rules in the code (Go to main.cpp)");
+    ioc::error("Program closed", "\n", message);
 }

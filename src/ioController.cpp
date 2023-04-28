@@ -1171,7 +1171,7 @@ namespace ioc
 
 
     /// @brief Does an std::cin but better (Gets all the the string and you can ask a question directly)
-    /// This function doesen't work as expected
+    /// This function doesn't work as expected
     /// @param text (std::string)
     /// @return std::string
     std::string input(std::string text)

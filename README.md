@@ -1,8 +1,10 @@
 # IO-Controller
 
-## 1.1.0
+## 1.1.2
 
 ### By: Paul Cannon
+
+#### Made with C++ and for C++
 ---
 
 First, you need to create a Makefile to do it easier, just copy the IO Controller Makefile and change the .o files to the ones that you want (DON'T GET RID OF 'ioController.o' and 'stdioc.o')
@@ -115,6 +117,32 @@ ioc::color::setBackground("blue"); // Sets the color background to blue
 ioc::print("The text background is blue and the text color is red!");
 
 ioc::color::reset(); // Resets the text background and text color of the terminal
+```
+
+How to do user input:
+
+```cpp
+std::string var = ioc::input("Whats your name? ", variable);
+ioc::print("Your name is: ", variable);
+```
+
+How to set rules:
+
+```cpp
+// Syntax:
+ioc::rules.ruleName = value
+
+// Variables:
+bool warnColorReset;
+bool errorColorReset;
+bool setLastColorBgWhenErrorOrWarnEnds;
+bool newlineWhenTextInput;
+
+ioc::rules.warnColorReset; // When you set a background color and there is a warning it will reset background color to default if its true
+ioc::rules.errorColorReset; // When you set a background color and there is an error it will reset background color to default if its true
+ioc::rules.setLastColorBgWhenErrorOrWarnEnds; // Sets last color of background when warning / error (the variable 'rules.warnColorResets' needs to be true and same with 'rules.errorColorResets')
+ioc::rules.newlineWhenTextInput; // If it's true, it will do a new line when doing user input
+
 ```
 
 Hope it helps!

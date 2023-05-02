@@ -5,7 +5,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <sys/ioctl.h>
-#include <typeinfo>
+#include <sstream>
 
 extern "C"
 {
@@ -29,18 +29,23 @@ bool ioc_key_is_pressed = false;
 #define IOC_getche                              c_getche
 #define IOC_kbhit                               c_kbhit
 
+/// @brief Checks if key is pressed
 #define IOC_IS_KEY_PRESSED\
     if (IOC_kbhit())
 
+/// @brief Does a loop
 #define loop\
     while (1)
 
+/// @brief Repeats (x) times
 #define repeat(x)\
     for (int i = 0 ; i < x ; i++)
 
+/// @brief Checks if (x) key is pressed
 #define IOC_KB_KEY_PRESSED(x)\
     if (ioc_key_pressed == (x))
 
+/// @brief Checks if (x) key is not pressed, or though you can add an else statement below IOC_KB_KEY_PRESSED
 #define IOC_KB_NOT_PRESSED(x)\
     if (ioc_key_pressed != (x))\
         if (ioc_key_is_pressed)
@@ -893,13 +898,15 @@ namespace ioc
             print(c_wherey());
         }
 
-        /// @brief Set a variable to cursor x in terminal
+        /// @brief Returns a variable to cursor x in terminal
+        /// @return int
         int whereX(void)
         {
             return c_wherex();
         }
         
-        /// @brief Set a variable to cursor y in terminal
+        /// @brief Returns a variable to cursor y in terminal
+        /// @return int
         int whereY(void)
         {
             return c_wherey();
@@ -1169,58 +1176,36 @@ namespace ioc
         }
     }
 
-
-    /// @brief Does an std::cin but better (Gets all the the string and you can ask a question directly)
-    /// This function doesn't work as expected
-    /// @param text (std::string)
-    /// @return std::string
-    std::string input(std::string text)
-    {
-        std::string keyInput = "";
-
-        if (!rules.newlineWhenTextInput)
-        {
-            ioc::echo(text);
-        }
-
-        else
-        {
-            ioc::print(text);
-        }
-
-        while (1)
-        {
-            ioc::kb::update();
-
-            if (ioc_key_pressed == "return")
-            {
-                return keyInput;
-            }
-
-            else if (ioc_key_pressed == "backspace")
-            {
-                ioc_key_pressed = "";
-
-                keyInput.pop_back();
-            }
-
-            else if (ioc_key_pressed == "space")
-            {
-                ioc_key_pressed = " ";
-            }
-
-            keyInput += ioc_key_pressed;
-
-            ioc::echo(ioc_key_pressed);
-        }
-    }
-
-    /// @brief Ends program and resets color manualy
     /// @param status (int)
     void end(int status)
     {
         ioc::color::reset();
         std::exit(status);
+    }
+
+    /// @brief Does std::getline(std::cin, var) 
+    /// @param text 
+    /// @param inputAnswer 
+    /// @return std::string 
+    std::string input(std::string text, std::string inputAnswer)
+    {
+        ioc::kb::clear();
+        ioc::print(ioc_key_pressed);
+        ioc::print(ioc_key_is_pressed);
+
+        if (ioc::rules.newlineWhenTextInput)
+        {
+            ioc::print(text);
+        }
+
+        else
+        {
+            ioc::echo(text);
+        }
+
+        std::getline(std::cin.ignore(), inputAnswer);
+
+        return inputAnswer;
     }
 
     template <typename T>
@@ -1296,7 +1281,7 @@ namespace ioc
 
         ioc::color::set(ioc_last_textColor);
     }
-    
+
     template <typename T, typename... Args>
 
     /// @brief Sets a warning

@@ -130,7 +130,7 @@ How to set rules:
 
 ```cpp
 // Syntax:
-ioc::rules.ruleName = value
+ioc::rules.ruleName = value;
 
 // Variables:
 bool warnColorReset;

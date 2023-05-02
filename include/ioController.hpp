@@ -100,7 +100,7 @@ namespace ioc
         echo(args...);
     }
 
-    std::string input(std::string text);
+    std::string input(std::string text, std::string var);
 
     int terminalW();
     int terminalH();
@@ -176,7 +176,6 @@ namespace ioc
         void reset();
     }
 
-
     namespace rule
     {
         void colorReset(bool val);
@@ -185,6 +184,7 @@ namespace ioc
 
     void end(int status);
     
+    std::string input(std::string text, std::string inputAnswer);
     
     template <typename T>
 

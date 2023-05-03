@@ -1190,8 +1190,6 @@ namespace ioc
     std::string input(std::string text, std::string inputAnswer)
     {
         ioc::kb::clear();
-        ioc::print(ioc_key_pressed);
-        ioc::print(ioc_key_is_pressed);
 
         if (ioc::rules.newlineWhenTextInput)
         {

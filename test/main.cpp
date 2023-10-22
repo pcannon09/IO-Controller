@@ -1,4 +1,5 @@
 #include "ioController.hpp"
+
 #include <iostream>
 #include <unistd.h>
 
@@ -196,12 +197,18 @@ int main()
     ioc::rules.errorColorReset = true;
     ioc::rules.warnColorReset = false;
 
-    std::string echoThing = "{NONE}";    
+    ioc::color::reset();
+
+    std::string echoThing = "{NONE}";
 
     echoThing = ioc::input("Type something and i will echo it: ", echoThing);
 
     ioc::print("You typed:", echoThing, "\n");
 
+    ioc::print("This is what you typed in lowercase: ", ioc::lower::stringType(echoThing));
+    ioc::print("And this is what you typed in uppercase: ", ioc::upper::stringType(echoThing));
+
     ioc::warn("Program is going", "to", "close, but as you can see, the warning background is set to a color and the error below is normal, you can set rules in the code (Go to main.cpp)");
     ioc::error("Program closed", "\n", message);
 }
+

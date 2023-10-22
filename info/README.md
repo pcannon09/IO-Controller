@@ -1,5 +1,5 @@
 # IO Contoller
-## 1.1.3
+## 1.2.0
 
 ---
 
@@ -28,7 +28,7 @@ Versions:
 		BETA:
 			Function input() is still in beta, but it does like python (It asks the user something that you want and it stores it in a variable (If you want))
 	}
-    
+
     Release 1.1.2 (29/04/2023)
     {
         Finished doing user input
@@ -36,7 +36,12 @@ Versions:
 
     Release 1.1.3 (29/05/2023)
     {
-        You can now see the line of the error / warning when doing 'ioc::warn()' or 'ioc::error()'
+        You can now see the line of the error / warning when doing 'ioc::warn()' or 'ioc::error()' [ REMOVED ]
         
         And fixed a bug when resetting color doing 'ioc::color::reset()'
+    }
+
+    Release 1.2.0 (10/10/2023)
+    {
+        You can now make an error without ending program so you can free memory or you can do other things... (Function called: errorNoEnd())
     }

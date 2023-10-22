@@ -21,6 +21,7 @@ extern std::string ioc_last_key_pressed;
 extern std::string ioc_last_textColor;
 extern std::string ioc_last_bgColor;
 extern std::string exception;
+extern std::string platform;
 
 extern bool ioc_key_is_pressed;
 
@@ -188,6 +189,53 @@ namespace ioc
     
     template <typename T>
 
+    /// @brief Do an error without ending program
+    /// @param text (T)
+    void errorNoEnd(T message)
+    {
+        ioc::color::set("red");
+
+        if (ioc::rules.errorColorReset == true)
+        {
+            ioc::color::setBackground("reset");
+        }
+
+        std::cout<<"Error: "<<message<<"\n";
+
+        if (ioc::rules.setLastColorBgWhenErrorOrWarnEnds == true)
+        {
+            ioc::color::setBackground(ioc_last_bgColor);
+        }
+    }
+    
+    template <typename T, typename... Args>
+
+    // @brief Do an error without ending program
+    /// @param text (T)
+    /// @param message (Args...)
+    void errorNoEnd(T text, Args... args)
+    {
+        ioc::color::set("red");
+
+        if (ioc::rules.errorColorReset == true)
+        {
+            ioc::color::setBackground("reset");
+        }
+
+        std::cout<<"Error: "<<text<<" ";
+
+        ioc::print(args...);
+
+        ioc::color::set(ioc_last_textColor);
+
+        if (ioc::rules.setLastColorBgWhenErrorOrWarnEnds == true)
+        {
+            ioc::color::setBackground(ioc_last_bgColor);
+        }
+    }
+
+    template <typename T>
+
     /// @brief Sets an error
     /// @param message (T)
     void error(T message)
@@ -200,7 +248,7 @@ namespace ioc
         }
 
         std::cout<<"Error: "<<message<<"\n";
-        
+
         if (ioc::rules.setLastColorBgWhenErrorOrWarnEnds == true)
         {
             ioc::color::setBackground(ioc_last_bgColor);
@@ -250,7 +298,7 @@ namespace ioc
             ioc::color::setBackground("reset");
         }
 
-        std::cout<<"Warning: "<<message<<"\n";
+        std::cout<<"Warn: "<<message<<"\n";
 
         if (ioc::rules.setLastColorBgWhenErrorOrWarnEnds == true)
         {
@@ -274,7 +322,7 @@ namespace ioc
             ioc::color::setBackground("reset");
         }
 
-        std::cout<<"Warning: "<<text<<" ";
+        std::cout<<"Warn: "<<text<<"\n";
 
         ioc::print(args...);
 
@@ -284,5 +332,17 @@ namespace ioc
         }
 
         ioc::color::set(ioc_last_textColor);
+    }
+
+    namespace lower
+    {
+        char charType(char ch);
+        std::string stringType(const std::string& str);
+    }
+
+    namespace upper
+    {
+        char charType(char ch);
+        std::string stringType(const std::string& str); 
     }
 }

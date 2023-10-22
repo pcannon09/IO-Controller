@@ -7,7 +7,17 @@ namespace ioc
 {
     /// @brief Makes setup for the program (It's highly recommended)
     void start()
-    {
+    { 
+#if defined(_WIN32)
+        platform = "win32";
+
+#elif defined(__linux__) || defined(__APPLE__)
+        platform = "linux apple";
+
+#else 
+        platform = "linux apple";
+
+#endif
         if (startCallCount == 0)
         {
             ioc::rule::reset();

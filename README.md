@@ -1,6 +1,6 @@
 # IO-Controller
 
-## 1.1.3
+## 1.2.0
 
 ### By: Paul Cannon
 
@@ -145,6 +145,17 @@ ioc::rules.errorColorReset; // When you set a background color and there is an e
 ioc::rules.setLastColorBgWhenErrorOrWarnEnds; // Sets last color of background when warning / error (the variable 'rules.warnColorResets' needs to be true and same with 'rules.errorColorResets')
 ioc::rules.newlineWhenTextInput; // If it's true, it will do a new line when doing user input
 
+```
+
+How to set warnings or errors:
+
+```cpp
+// Errors
+ioc::error("This is an error", " that can have more than 1 param")
+ioc::errorNoEnd("This is an error", " that can have more than 1 param", " and you can add your end function below this line of code")
+// You can add end function here
+// Warnings
+ioc::warning("This is a warning", " that can have more than 1 param")
 ```
 
 Hope it helps!

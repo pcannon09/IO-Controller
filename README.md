@@ -7,8 +7,6 @@
 #### Made with C++ and for C++
 ---
 
-This project is now part from Eduli (https://github.com/EduliSoftware)
-
 First, you need to create a Makefile to do it easier, just copy the IO Controller Makefile and change the .o files to the ones that you want (DON'T GET RID OF 'ioController.o' and 'stdioc.o')
 
 How to include:
